@@ -59,12 +59,14 @@ class Process:
                 statistics = []         # We store stats_dict from each node in the statistics list.
                 for rank in range(self.world_size):
                     if rank == self.rank:
+                        self.stats_dict["resolve_data"] = self.resolved
                         stat = self.stats_dict
                     else: 
                         send_req = self.send(Job(Job.STATS), dest = rank)
                         stat = self.recv(source = rank)
                     statistics.append( (rank, stat) )
                 with open('data/statistics.txt', 'w+') as f:
+                    statistics = self.make_stats(statistics)
                     f.write(str(statistics))
                 self.comm.Abort()
             if self.work.empty():
@@ -109,6 +111,7 @@ class Process:
                                   # Resolved.
         self.stats_dict = {}            # Dictionary continue statistics for process.
         self.stats_dict["num_lookups"] = 0
+        self.stats_dict["resolve_data"] = {}
 
     def add_job(self, job):
         """
@@ -187,7 +190,19 @@ class Process:
         """
         Returns stats for this Process to the root Process.
         """
+        self.stats_dict["resolve_data"] = self.resolved
         self.send(self.stats_dict, dest = self.root)
+
+    def make_stats(self, stats):
+        resolve_data_dict = {}
+        for item in stats:
+            node = item[0]
+            node_data = item[1]
+            for pos in node_data["resolve_data"]:
+                soln = node_data["resolve_data"][pos]
+                resolve_data_dict[pos] = soln
+        stats.append( ("Clean resolve data", resolve_data_dict) )
+        return stats
 
     def check_for_updates(self, job):
         """
@@ -217,8 +232,8 @@ class Process:
         """
         Private method that helps reduce in resolve.
         """
-        nums = {LOSS : 0, DRAW : 1, TIE : 2, WIN : 3}
-        states = (LOSS, DRAW, TIE, WIN)
+        nums = {WIN : 0, DRAW : 1, TIE : 2, LOSS : 3}
+        states = (WIN, DRAW, TIE, LOSS)
 
         if res2 == None:
             return negate(res1)
@@ -281,4 +296,3 @@ class Process:
                          ", remoteness: " + str(self.remote[to_resolve.game_state.pos]))
             to = Job(Job.SEND_BACK, job.game_state, to_resolve.parent, to_resolve.job_id)
             self.add_job(to)
-        self.stats_dict["resolve_data"] = self.resolved
