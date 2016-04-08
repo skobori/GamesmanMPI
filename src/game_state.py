@@ -78,3 +78,6 @@ class GameState:
         variable is: WLTD?
         """
         return game_module.primitive(self.pos)
+
+    def __str__(self):
+        return "Pos: {0}, State: {1}, Remoteness: {2}".format(self.pos, self._state, self._remoteness)

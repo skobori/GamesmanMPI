@@ -1,1 +1,1 @@
-[(0, {'num_lookups': 51, 'resolve_data': {2: 0, 10: 0, 5: 0, 6: 1, 7: 0}}), (1, {'num_lookups': 74, 'resolve_data': {0: 1, 1: 0, 3: 1}}), (2, {'num_lookups': 16, 'resolve_data': {8: 0, 9: 1, 4: 0}}), ('Clean resolve data', {0: 1, 1: 0, 2: 0, 3: 1, 4: 0, 5: 0, 6: 1, 7: 0, 8: 0, 9: 1, 10: 0})]
+[(0, {'num_lookups': 2, 'resolve_data': {2: 0}}), (1, {'num_lookups': 7, 'resolve_data': {0: 1, 1: 0, 3: 1}}), (2, {'num_lookups': 1, 'resolve_data': {4: 0}}), ('Clean resolve data', {0: 1, 1: 0, 2: 0, 3: 1, 4: 0})]
